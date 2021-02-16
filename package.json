@@ -1,0 +1,7 @@
+{
+  "name": "user-auth-crud",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "luisolimpio <lipeolimpio12@gmail.com>",
+  "license": "MIT"
+}
