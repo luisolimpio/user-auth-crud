@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 
-("use strict");
+"use strict"
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -21,9 +21,10 @@ module.exports = {
       },
       email: {
         type: Sequelize.STRING,
+        unique: true,
         allowNull: false,
       },
-      password: {
+      password_hash: {
         type: Sequelize.STRING,
         allowNull: false,
       },
