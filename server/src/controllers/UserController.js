@@ -1,14 +1,103 @@
+const { Op } = require("sequelize");
 const User = require("../models/User");
 
 class UserController {
   async index(request, response) {
-    try {
-      const users = await User.findAll();
+    const filter = request.query;
 
-      return response.status(200).json(users);
+    const page = filter.page;
+    const name = filter.name;
+    const email = filter.email;
+    const cpf = filter.cpf;
+
+    const perPage = 10;
+
+    let users = [];
+
+    let count = 0;
+
+    try {
+      if (name) {
+        await User.findAndCountAll({
+          where: {
+            name: {
+              [Op.like]: `%${name.toLowerCase()}%`,
+            },
+          },
+          offset: (Number(page) - 1) * perPage,
+          limit: perPage,
+        }).then((result) => {
+          count = result.count;
+          users = result.rows;
+        });
+      } else if (email) {
+        await User.findAndCountAll({
+          where: {
+            email: {
+              [Op.like]: `%${email}%`,
+            },
+            offset: (Number(page) - 1) * perPage,
+            limit: perPage,
+          },
+        }).then((result) => {
+          count = result.count;
+          users = result.rows;
+        });
+      } else if (cpf) {
+        await User.findAndCountAll({
+          where: {
+            cpf: {
+              [Op.like]: `%${cpf}%`,
+            },
+            offset: (Number(page) - 1) * perPage,
+            limit: perPage,
+          },
+        }).then((result) => {
+          count = result.count;
+          users = result.rows;
+        });
+      } else {
+        await User.findAndCountAll({
+          offset: (Number(page) - 1) * perPage,
+          limit: perPage,
+        }).then((result) => {
+          count = result.count;
+          users = result.rows;
+        });
+      }
+
+      let pagination = {
+        current_page: Number(page),
+        total_pages: 1,
+        total: 0,
+      };
+
+      if (count) {
+        pagination = {
+          current_page: Number(page),
+          total_pages: Math.ceil(Number(count) / perPage),
+          total: Number(count),
+        };
+      }
+
+      const serializedUsers = users.filter((user) => {
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          cpf: user.cpf,
+        };
+      });
+
+      const data = {
+        users: serializedUsers,
+        pagination,
+      };
+
+      return response.status(201).json(data);
     } catch (err) {
       console.error(err);
-      return response.status(400).send("Server internal error!");
+      return response.status(400).json({ message: "Server internal error" });
     }
   }
 

@@ -8,12 +8,10 @@ const userController = new UserController();
 
 const routes = Router();
 
-routes.use(authMiddleware);
-
-routes.get('/users', userController.index);
-routes.get('/users/:id', userController.show);
+routes.get('/users', authMiddleware, userController.index);
+routes.get('/users/:id', authMiddleware, userController.show);
 routes.post('/users', userController.store);  
-routes.put('/users/:id', userController.update);
-routes.delete('/users/:id', userController.destroy);
+routes.put('/users/:id',authMiddleware, userController.update);
+routes.delete('/users/:id', authMiddleware, userController.destroy);
 
 module.exports = routes;
