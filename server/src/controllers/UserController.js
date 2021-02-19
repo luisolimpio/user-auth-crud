@@ -36,9 +36,9 @@ class UserController {
             email: {
               [Op.like]: `%${email}%`,
             },
-            offset: (Number(page) - 1) * perPage,
-            limit: perPage,
           },
+          offset: (Number(page) - 1) * perPage,
+          limit: perPage,
         }).then((result) => {
           count = result.count;
           users = result.rows;
@@ -49,9 +49,9 @@ class UserController {
             cpf: {
               [Op.like]: `%${cpf}%`,
             },
-            offset: (Number(page) - 1) * perPage,
-            limit: perPage,
           },
+          offset: (Number(page) - 1) * perPage,
+          limit: perPage,
         }).then((result) => {
           count = result.count;
           users = result.rows;
@@ -97,7 +97,7 @@ class UserController {
       return response.status(201).json(data);
     } catch (err) {
       console.error(err);
-      return response.status(400).json({ message: "Server internal error" });
+      return response.status(400).json({ message: "Erro interno no servidor" });
     }
   }
 
@@ -110,10 +110,10 @@ class UserController {
     if (matchedEmail)
       return response
         .status(401)
-        .json({ message: "E-mail already registered" });
+        .json({ message: "E-mail já cadastrado!" });
 
     if (matchedCpf)
-      return response.status(401).json({ message: "CPF already registered" });
+      return response.status(401).json({ message: "CPF já cadastrado!" });
 
     try {
       const user = await User.create({
@@ -128,14 +128,14 @@ class UserController {
       return response.status(201).json(user);
     } catch (err) {
       console.error(err);
-      return response.status(400).json({ message: "Server internal error" });
+      return response.status(400).json({ message: "Erro interno no servidor" });
     }
   }
 
   async show(request, response) {
     const { id } = request.params;
 
-    if (!id) return response.status(400).json({ message: "Missing user id" });
+    if (!id) return response.status(400).json({ message: "Id não informado" });
 
     try {
       const user = await User.findOne({ where: { id } });
@@ -143,7 +143,7 @@ class UserController {
       return response.status(200).json(user);
     } catch (err) {
       console.error(err);
-      return response.status(400).json({ message: "Server internal error" });
+      return response.status(400).json({ message: "Erro interno no servidor" });
     }
   }
 
@@ -151,7 +151,18 @@ class UserController {
     const { id } = request.params;
     const { name, surname, email, password, phone, cpf } = request.body;
 
-    if (!id) return response.status(400).json({ message: "Missing user id" });
+    if (!id) return response.status(400).json({ message: "Id não informado" });
+
+    const matchedEmail = await User.findOne({ where: { email } });
+    const matchedCpf = await User.findOne({ where: { cpf } });
+
+    if (matchedEmail)
+      return response
+        .status(401)
+        .json({ message: "E-mail already registered" });
+
+    if (matchedCpf)
+      return response.status(401).json({ message: "CPF já registrado" });
 
     try {
       await User.update(
@@ -166,30 +177,30 @@ class UserController {
         { individualHooks: true, where: { id } }
       );
 
-      return response.status(201).json({ message: "User has been updated" });
+      return response.status(201).json({ message: "Usuário foi atualizado" });
     } catch (err) {
       console.error(err);
-      return response.status(400).json({ message: "Server internal error" });
+      return response.status(400).json({ message: "Erro interno no servidor" });
     }
   }
 
   async destroy(request, response) {
     const { id } = request.params;
 
-    if (!id) return response.status(400).json({ message: "Missing user id" });
+    if (!id) return response.status(400).json({ message: "Id não informado" });
 
     try {
       const deleted = await User.destroy({ where: { id } });
 
       if (deleted > 0)
-        return response.status(200).json({ message: "User has been deleted" });
+        return response.status(200).json({ message: "Usuário foi deletado" });
 
       return response
         .status(400)
-        .json({ message: "Something went wrong, no user has been deleted" });
+        .json({ message: "Algo deu errado, usuário não foi deletado" });
     } catch (err) {
       console.error(err);
-      return response.status(400).json({ message: "Server internal error" });
+      return response.status(400).json({ message: "Erro interno no servidor" });
     }
   }
 }
