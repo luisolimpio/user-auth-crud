@@ -10,7 +10,7 @@ class UserController {
     const email = filter.email;
     const cpf = filter.cpf;
 
-    const perPage = 10;
+    const perPage = 6;
 
     let users = [];
 
@@ -153,15 +153,15 @@ class UserController {
 
     if (!id) return response.status(400).json({ message: "Id não informado" });
 
-    const matchedEmail = await User.findOne({ where: { email } });
+    const matchedEmail = await User.findOne({ where: { email} });
     const matchedCpf = await User.findOne({ where: { cpf } });
 
-    if (matchedEmail)
+    if (matchedEmail && matchedEmail.id !== id)
       return response
         .status(401)
-        .json({ message: "E-mail already registered" });
+        .json({ message: "E-mail já registrado!" });
 
-    if (matchedCpf)
+    if (matchedCpf && matchedCpf.id !== id)
       return response.status(401).json({ message: "CPF já registrado" });
 
     try {
