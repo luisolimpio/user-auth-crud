@@ -1,17 +1,21 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { FiPlusCircle } from "react-icons/fi";
+import { FiPlusCircle, FiLogOut } from "react-icons/fi";
+import { toast } from "react-toastify";
 
 import Table from "../../components/Table";
 import Input from "../../components/Input";
 import Select from "../../components/Select";
+import Alert from "../../components/Alert";
 
 import { DeleteUser, GetUsers } from "../../services/users";
+import { useAuth } from "../../contexts/auth";
 
 import "./styles.css";
 
 function User() {
   const history = useHistory();
+  const { logout } = useAuth()
 
   const [users, setUsers] = useState([]);
 
@@ -28,6 +32,7 @@ function User() {
     total: 0,
   });
 
+  const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
   const getUsers = useCallback(async () => {
@@ -41,6 +46,22 @@ function User() {
       else setError("Erro interno no servidor");
     }
   }, [page, name, email, cpf]);
+
+  function prevPage() {
+    if (page === 1) {
+      return;
+    }
+
+    setPage(page - 1);
+  }
+
+  function nextPage() {
+    if (pagination.total_pages === pagination.current_page) {
+      return;
+    }
+
+    setPage(page + 1);
+  }
 
   function handleSearch(data) {
     if (selectedValue === "name") setName(data);
@@ -57,6 +78,8 @@ function User() {
       setPage(1);
 
       getUsers();
+
+      setSuccess("O usuário foi deletado com sucesso.");
     } catch (err) {
       if (err.response) setError(err.response.data.message);
       else setError("Erro interno no servidor");
@@ -75,13 +98,36 @@ function User() {
   }, [getUsers]);
 
   useEffect(() => {
-    if (error) alert(error);
+    if (error)
+      toast.error(error, {
+        onClose: () => setError(""),
+      });
   }, [error]);
+
+  useEffect(() => {
+    if (success)
+      toast.success(success, {
+        onClose: () => setSuccess(""),
+      });
+  }, [success]);
 
   return (
     <div id="user-page">
+      <Alert
+        name={
+          error
+            ? "Toastify__toast--error"
+            : success
+            ? "Toastify__toast--success"
+            : ""
+        }
+      />
       <div id="user-page-content" className="container">
         <div className="header-table">
+          <button type="button" id="logout" onClick={logout}>
+            Sair
+            <FiLogOut size="2rem" />
+          </button>
           <div className="search-container">
             {selectedValue === "name" ? (
               <Input
@@ -133,6 +179,14 @@ function User() {
               handleDeleteUser(id);
             }}
           />
+          <div className="page-options">
+            <button type="button" onClick={prevPage}>
+              Anterior
+            </button>
+            <button type="button" onClick={nextPage}>
+              Próximo
+            </button>
+          </div>
         </div>
       </div>
     </div>

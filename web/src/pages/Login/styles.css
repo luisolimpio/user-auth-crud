@@ -72,3 +72,16 @@
 #login-page form button[type="submit"]:hover {
   background: var(--color-secundary-dark);
 }
+
+#login-page .remember-me {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 0.8rem;
+}
+
+#login-page .remember-me input {
+  width: 1.6rem;
+  height: 1.6rem;
+  margin-left: 1.6rem;
+}

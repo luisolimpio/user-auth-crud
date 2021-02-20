@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
   const [checked, setChecked] = useState("");
 
   const [signed, setSigned] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const loadStoragedData = useCallback(() => {
     const storagedUser = localStorage.getItem("@RNUSR:user");
@@ -88,11 +88,11 @@ export function AuthProvider({ children }) {
       email: "",
     });
 
-    setEmail('');
-    setPassword('');
-    setError('');
+    setEmail("");
+    setPassword("");
+    setError("");
     setSigned(false);
-    history.push('/');
+    history.push("/");
   }
 
   function handleEmail(data) {
@@ -124,9 +124,10 @@ export function AuthProvider({ children }) {
         error,
         login,
         logout,
+        setError,
+        handleCheckbox,
         handleEmail,
         handlePassword,
-        handleCheckbox
       }}
     >
       {children}

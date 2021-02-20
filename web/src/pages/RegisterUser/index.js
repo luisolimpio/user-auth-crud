@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
+import { toast } from "react-toastify";
 
 import Input from "../../components/Input";
+import Alert from "../../components/Alert";
 
 import { SubmitUser } from "../../services/users";
 
@@ -16,6 +18,7 @@ function RegisterUser() {
   const [phone, setPhone] = useState("");
   const [cpf, setCpf] = useState("");
 
+  const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
   async function submitUser(e) {
@@ -33,7 +36,7 @@ function RegisterUser() {
 
       await SubmitUser(data);
 
-      alert(`O usuário ${name} foi cadastrado com sucesso!`);
+      setSuccess(`O usuário ${name} foi cadastrado com sucesso!`);
 
       setName("");
       setSurname("");
@@ -47,8 +50,21 @@ function RegisterUser() {
     }
   }
 
+  useEffect(() => {
+    if (error) toast.error(error, {
+      onClose: () => setError(""),
+    });
+  }, [error]);
+
+  useEffect(() => {
+    if (success) toast.success(success, {
+      onClose: () => setSuccess(""),
+    });
+  }, [success]);
+
   return (
     <div id="register-page">
+      <Alert name={error ? 'Toastify__toast--error' : (success ? 'Toastify__toast--success' : '')} />
       <div id="register-page-content" className="container">
         <main>
           <Link to="/">

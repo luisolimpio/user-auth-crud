@@ -61,3 +61,38 @@
   background: var(--color-secundary-dark);
 }
 
+#user-page-content .page-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#user-page-content .page-options button {
+  width: 20%;
+  height: 4rem;
+  margin-top: 1.6rem;
+  background: var(--color-secundary);
+  color: var(--color-button-text);
+  outline: none;
+  border: 0;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  font: 700 1.6rem Archivo;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+#user-page-content #logout {
+  margin-top: 0;
+  width: 15%;
+  height: 4rem;
+  background-color: var(--color-error-dark);
+}
+
+#user-page-content #logout:hover {
+  background-color: var(--color-error);
+}
+

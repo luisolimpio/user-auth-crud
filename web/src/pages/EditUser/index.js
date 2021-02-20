@@ -1,8 +1,10 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
+import { toast } from "react-toastify";
 
 import Input from "../../components/Input";
+import Alert from "../../components/Alert";
 
 import { GetUser, UpdateUser } from "../../services/users";
 
@@ -10,8 +12,6 @@ import "./styles.css";
 
 function EditUser({ location }) {
   const id = location.state.id;
-
-  const history = useHistory();
 
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
@@ -21,6 +21,7 @@ function EditUser({ location }) {
   const [phone, setPhone] = useState("");
   const [cpf, setCpf] = useState("");
 
+  const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
   function setUser(data) {
@@ -72,8 +73,7 @@ function EditUser({ location }) {
         await UpdateUser(id, data);
       }
 
-      alert(`O usuário ${name} foi atualizado com sucesso!`);
-      history.push('/');
+      setSuccess(`O usuário ${name} foi atualizado com sucesso!`);
     } catch (err) {
       if (err) setError(err.response.data.message);
       else setError("Erro interno no servidor");
@@ -85,11 +85,20 @@ function EditUser({ location }) {
   }, [getUser]);
 
   useEffect(() => {
-    if (error) alert(error);
+    if (error) toast.error(error, {
+      onClose: () => setError(""),
+    });
   }, [error]);
+
+  useEffect(() => {
+    if (success) toast.success(success, {
+      onClose: () => setSuccess(""),
+    });
+  }, [success]);
 
   return (
     <div id="edit-page">
+      <Alert name={error ? 'Toastify__toast--error' : (success ? 'Toastify__toast--success' : '')} />
       <div id="edit-page-content" className="container">
         <main>
           <Link to="/">

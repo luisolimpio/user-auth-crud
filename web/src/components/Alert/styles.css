@@ -1,0 +1,21 @@
+.Toastify__toast-container {
+}
+.Toastify__toast {
+}
+.Toastify__toast--error {
+  background: var(--color-error-dark);
+  font-size: 1.5rem;
+  color: #FFF;
+}
+.Toastify__toast--warning {
+}
+.Toastify__toast--success {
+  background: var(--color-secundary);
+  font-size: 1.5rem;
+  color: #FFF;
+}
+.Toastify__toast-body {
+}
+.Toastify__progress-bar {
+  background: #FFF;
+}
